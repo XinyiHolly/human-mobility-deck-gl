@@ -19,9 +19,9 @@ function initMap() {
 	
 	var myLatlng = new google.maps.LatLng(43.0731, -89.4012);
 	var mapOptions = {
-		zoom : 16,
+		zoom : 13,
 		center : myLatlng,
-		mapTypeId : 'terrain' //hybrid
+		mapTypeId : 'roadmap' /*'terrain'*/ /*'hybrid'*/ /*'satellite'*/
 	};
 	map = new google.maps.Map(document.getElementById('map'), mapOptions);
 //
@@ -29,43 +29,15 @@ function initMap() {
 //
 //	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-//	drawingManager = new google.maps.drawing.DrawingManager({
-//		drawingMode : google.maps.drawing.OverlayType.HAND,
-//		drawingControl : true,
-//		drawingControlOptions : {
-//			position : google.maps.ControlPosition.TOP_RIGHT,
-//			drawingModes : [ 'marker', 'circle', 'polygon', 'rectangle' ]
-//		},
-//		/*markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},*/
-//		circleOptions : {
-//			fillColor : '#ffff00',
-//			fillOpacity : 1,
-//			strokeWeight : 5,
-//			clickable : false,
-//			editable : true,
-//			zIndex : 1
-//		}
-//	});
-//	drawingManager.setMap(map);
-
-//	new deck.DeckGL({
-//	  mapboxApiAccessToken: 'pk.eyJ1IjoidWJlcmRhdGEiLCJhIjoiY2pudzRtaWloMDAzcTN2bzN1aXdxZHB5bSJ9.2bkj3IiRC8wj3jLThvDGdA',
-//	  mapStyle: 'mapbox://styles/mapbox/light-v9',
-//	  longitude: -74,
-//	  latitude: 40.76,
-//	  zoom: 11,
-//	  maxZoom: 16,
-//	  layers: [
-//	    new deck.ScatterplotLayer({
-//	      id: 'scatter-plot',
-//	      data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/scatterplot/manhattan.json',
-//	      radiusScale: 10,
-//	      radiusMinPixels: 0.5,
-//	      getPosition: d => [d[0], d[1], 0],
-//	      getColor: d => (d[2] === 1 ? MALE_COLOR : FEMALE_COLOR)
-//	    })
-//	  ]
-//	});
+	drawingManager = new google.maps.drawing.DrawingManager({
+		drawingMode : google.maps.drawing.OverlayType.HAND,
+		drawingControl : true,
+		drawingControlOptions : {
+			position : google.maps.ControlPosition.TOP_RIGHT,
+			drawingModes : [ 'marker', 'circle', 'polygon', 'rectangle' ]
+		},
+	});
+	drawingManager.setMap(map);
 	
 	ajaxGetAllPointsAndArcs();
 
@@ -122,8 +94,8 @@ function ajaxGetAllPointsAndArcs() {
 
 function addAllPoints(allPoints) {
 	
-	const HOME_COLOR = [0, 128, 255];
-	const OTHER_COLOR = [255, 0, 128];
+	const OTHER_COLOR = [0, 128, 255];
+	const HOME_COLOR = [255, 0, 128];
 	
 //	var geojson = JSON.parse(allPoints);
 	var features = allPoints.features;
@@ -147,25 +119,8 @@ function addAllPoints(allPoints) {
 
 function addAllTransits(allTransits) {
 	
-	const HOME_COLOR = [0, 128, 255];
-	const OTHER_COLOR = [255, 0, 128];
-	
-	console.log(allTransits);
-	
-//	const deckOverlay = new deck.GoogleMapsOverlay({
-//	  layers: [
-//	    new deck.ArcLayer({
-//	      id: 'arcs',
-//	      data: allTransits,
-//	      dataTransform: d => d.features.filter(f => f.userno > -1),
-//	      getSourcePosition: f => [f.originlon, f.originlat],
-//	      getTargetPosition: f => [f.destlon, f.destlat],
-//	      getSourceColor: f => (f.zonetype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
-//	      getTargetColor: f => (f.zonetype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
-//	      getWidth: 1
-//	    })
-//	  ]
-//	});
+	const OTHER_COLOR = [0, 128, 255];
+	const HOME_COLOR = [255, 0, 128];
 	
 	const deckOverlay = new deck.GoogleMapsOverlay({
 	  layers: [
@@ -174,8 +129,8 @@ function addAllTransits(allTransits) {
 	      data: allTransits,
 	      getSourcePosition: d => [d.originlon, d.originlat],
 	      getTargetPosition: d => [d.destlon, d.destlat],
-	      getSourceColor: d => (d.zonetype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
-	      getTargetColor: d => (d.zonetype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
+	      getSourceColor: d => (d.origintype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
+	      getTargetColor: d => (d.desttype === "Dwelling" ? HOME_COLOR : OTHER_COLOR),
 	      getWidth: 1
 	    })
 	  ]

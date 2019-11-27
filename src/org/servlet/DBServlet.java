@@ -49,7 +49,7 @@ public class DBServlet extends HttpServlet {
 			String sql = null;
 			String dbName = "madison";
 			String tableName = "mt_ultraselected"; 
-			dr = new DBUtility(dbName, "postgres", "postgres");
+			dr = new DBUtility(dbName, "postgres", "admin");
 			String user_field = "subid";
 
 			int action = Integer.parseInt(request.getParameter("action"));	
@@ -231,20 +231,29 @@ public class DBServlet extends HttpServlet {
 					}
 					
 					sql = "select user_no, smtcid as clusterid from "
-						+ tableName
-						+ " where smtcid != 0 and user_no = " + user_no
+						+ tableName + " where smtcid != 0 and user_no = " + user_no
 						+ " order by EXTRACT(year FROM create_at), EXTRACT(month FROM create_at), EXTRACT(day FROM create_at)"; 
 					Rset  = dr.queryDB(sql);
+					int formerid = -1;
 					while (Rset.next()) {
 						JSONObject obj = new JSONObject(); 
 						int clusterid = Rset.getInt("clusterid");
-						obj.put("originlat", geomedians.get(clusterid - 1).getLatitude());
-						obj.put("originlon", geomedians.get(clusterid - 1).getLongitude());
-						obj.put("destlat", geomedians.get(clusterid - 1).getLatitude());
-						obj.put("destlon", geomedians.get(clusterid - 1).getLongitude());
-						obj.put("zonetype", geomedians.get(clusterid - 1).getZoneType());
-						obj.put("userno", user_no);
-						resultArray.put(obj);
+						if (formerid != -1 && formerid != clusterid) {
+//							obj.put("origin", "[" + geomedians.get(formerid - 1).getLatitude() + "," + geomedians.get(formerid - 1).getLongitude() + "]");
+//							obj.put("dest", "[" + geomedians.get(clusterid - 1).getLatitude() + "," + geomedians.get(clusterid - 1).getLongitude() + "]");
+							obj.put("originlon", geomedians.get(formerid - 1).getLongitude());
+							obj.put("originlat", geomedians.get(formerid - 1).getLatitude());
+							obj.put("destlon", geomedians.get(clusterid - 1).getLongitude());
+							obj.put("destlat", geomedians.get(clusterid - 1).getLatitude());
+							obj.put("origintype", geomedians.get(formerid - 1).getZoneType());
+							obj.put("desttype", geomedians.get(clusterid - 1).getZoneType());
+							obj.put("userno", user_no);
+							resultArray.put(obj);
+							formerid = clusterid;
+						}		
+						if (formerid == -1) {
+							formerid = clusterid;
+						}
 					}
 				}
 				result.put("transits", resultArray);
@@ -278,7 +287,7 @@ public class DBServlet extends HttpServlet {
 			String sql = null;
 			String dbName = "madison_gps";
 			String tableName = "records_test"; 
-			dr = new DBUtility(dbName, "postgres", "postgres");
+			dr = new DBUtility(dbName, "postgres", "admin");
 
 			String trajectory_id = request.getParameter("user_no");
 			int action = Integer.parseInt(request.getParameter("action"));

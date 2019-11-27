@@ -17,7 +17,7 @@ import org.json.JSONObject;
  */
 public class DBUtility {	
 	private static final String Driver = "org.postgresql.Driver";  // the JDBC driver 
-	private static String ConnectionString = "jdbc:postgresql://localhost:5433/madison";
+	private static String ConnectionString = "jdbc:postgresql://localhost:5432/madison";
 	private static String USER = "postgres";
 	private static String PWD = "postgres";
 	/**
@@ -35,7 +35,7 @@ public class DBUtility {
 	public DBUtility( String dbName, String user_name, String password) {
 		USER = user_name;
 		PWD = password;
-		ConnectionString = "jdbc:postgresql://localhost:5433/" + dbName;	
+		ConnectionString = "jdbc:postgresql://localhost:5432/" + dbName;	
 	}
 	
 	/**
